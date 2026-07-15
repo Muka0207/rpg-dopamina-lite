@@ -1,4 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
+import { FireMessageCard } from "./components/FireMessageCard";
+import { pickFireMessage } from "./utils/pickFireMessage";
 import "./App.css";
 
 import {
@@ -107,10 +109,20 @@ function App() {
     useState<Mission["difficulty"]>("facil");
   const [saving, setSaving] = useState(false);
 
+  const [bonfireMessage] = useState(() =>
+    pickFireMessage({
+      context: "bonfire",
+      preferredTones: ["brasa", "cinematic", "discipline"],
+    })
+  );
+
   const todayId = getTodayId();
 
   const xpToNextLevel = getNextLevelXp(profile.level);
-  const xpProgress = Math.min(100, Math.round((profile.xp / xpToNextLevel) * 100));
+  const xpProgress = Math.min(
+    100,
+    Math.round((profile.xp / xpToNextLevel) * 100)
+  );
 
   const completedIds = useMemo(() => {
     return dailyLog?.completedMissions ?? [];
@@ -297,7 +309,8 @@ function App() {
           </button>
 
           <span className="small-muted">
-            Seu progresso será salvo no Firebase e sincronizado entre PC e celular.
+            Seu progresso será salvo no Firebase e sincronizado entre PC e
+            celular.
           </span>
         </section>
       </main>
@@ -326,6 +339,8 @@ function App() {
 
           <h2>“{profile.impactPhrase}”</h2>
           <p>{profile.futureIdentity}</p>
+
+          <FireMessageCard message={bonfireMessage} />
         </article>
 
         <article className="stats-card">
@@ -358,7 +373,9 @@ function App() {
       <section className="xp-section">
         <div className="xp-header">
           <span>Progresso até o próximo nível</span>
-          <strong>{profile.xp} / {xpToNextLevel} XP</strong>
+          <strong>
+            {profile.xp} / {xpToNextLevel} XP
+          </strong>
         </div>
 
         <div className="xp-bar">
@@ -389,7 +406,8 @@ function App() {
                 <div>
                   <strong>{mission.title}</strong>
                   <span>
-                    {mission.difficulty} · +{mission.xp} XP · +{mission.coins} moeda
+                    {mission.difficulty} · +{mission.xp} XP · +{mission.coins}{" "}
+                    moeda
                   </span>
                 </div>
 
@@ -409,7 +427,9 @@ function App() {
           <select
             value={newMissionDifficulty}
             onChange={(event) =>
-              setNewMissionDifficulty(event.target.value as Mission["difficulty"])
+              setNewMissionDifficulty(
+                event.target.value as Mission["difficulty"]
+              )
             }
           >
             <option value="facil">Fácil</option>
